@@ -5,7 +5,6 @@
 class Vector
 {
 public:
-
 	Vector()
 	{
 		x = 0;
@@ -13,13 +12,47 @@ public:
 		z = 0;
 	}
 
+	Vector(float num) = delete;
+
 	Vector(float x, float y, float z)
 	{
 		this->x = x;
 		this->y = y;
 		this->z = z;
 	}
-	
+
+	Vector(const Vector& other)
+	{
+		std::cout << "\n Copy constructor \n";
+		x = other.x;
+		y = other.y;
+		z = other.z;
+	}
+
+	~Vector()
+	{
+		if (Info)
+		{
+			delete Info;
+		}
+	}
+
+	Vector& operator=(Vector& other)
+	{
+		std::cout << " operator = ";
+		x = other.x;
+		y = other.y;
+		z = other.z;
+
+		if (other.Info)
+		{
+			if (Info) delete Info;
+			Info = new std::string(*(other.Info));
+		}
+
+		return (*this);
+	}
+
 	operator float()
 	{
 		return sqrt(x * x + y * y + z * z);
@@ -27,13 +60,7 @@ public:
 
 	friend Vector operator+(const Vector& a, const Vector& b);
 
-	friend Vector operator-(const Vector& a, const Vector& b);
-
-	friend Vector operator*(const Vector& a, const float c);
-
 	friend std::ostream& operator<<(std::ostream& out, const Vector& v);
-
-	friend std::istream& operator>>(std::istream& in, Vector& v);
 
 	friend bool operator>(const Vector& a, const Vector& b);
 
@@ -41,19 +68,19 @@ public:
 	{
 		switch (index)
 		{
-			case 0:
-				return x;
-				break;
-			case 1:
-				return y;
-				break;
-			case 2:
-				return z;
-				break;
-			default:
-				std::cout << "index error";
-				return 0;
-				break;
+		case 0:
+			return x;
+			break;
+		case 1:
+			return y;
+			break;
+		case 2:
+			return z;
+			break;
+		default:
+			std::cout << "index error";
+			return 0;
+			break;
 		}
 	}
 
@@ -61,7 +88,50 @@ private:
 	float x;
 	float y;
 	float z;
-	float c;
+
+	std::string* Info;
+};
+
+class Array
+{
+public:
+	Array()
+	{
+		int Rows = 5;
+		int Cols = 4;
+		int** arr = new int* [Rows];
+
+		for (int i = 0; i < Rows; i++)
+		{
+			arr[i] = new int[Cols];
+		}
+		//Заполнение массива
+		for (int i = 0; i < Rows; i++)
+		{
+			for (int j = 0; j < Cols; j++)
+			{
+				arr[i][j] = rand() % 9;
+			}
+		}
+		//Вывод массива
+		for (int i = 0; i < Rows; i++)
+		{
+			for (int j = 0; j < Cols; j++)
+			{
+				std::cout << arr[i][j] << "\t";
+			}
+			std::cout << "\n";
+		}
+
+		for (int i = 0; i < Rows; i++)
+		{
+			delete[] arr[i];
+		}
+
+		delete[] arr;
+	}
+
+	friend std::ostream& operator<<(std::ostream& out, const Array& a);
 };
 
 bool operator>(const Vector& a, const Vector& b)
@@ -74,45 +144,25 @@ Vector operator+(const Vector& a, const Vector& b)
 	return Vector(a.x + b.x, a.y + b.y, a.z + b.z);
 }
 
-Vector operator-(const Vector& a, const Vector& b)
-{
-	return Vector(a.x - b.x, a.y - b.y, a.z - b.z);
-}
-
-Vector operator*(const Vector& a, const float c)
-{
-	return Vector(a.x * c, a.y * c, a.z * c);
-}
-
 std::ostream& operator<<(std::ostream& out, const Vector& v)
 {
 	out << ' ' << v.x << ' ' << v.y << ' ' << v.z;
 	return out;
 }
 
-std::istream& operator>>(std::istream& in, Vector& v)
+std::ostream& operator<<(std::ostream& out, const Array& a)
 {
-	std::cout << ' ' << "Enter x, y and z values, and press Enter" << '\n';
-	in >> v.x >> v.y >> v.z;
-	return in;
+	return out;
 }
 
 int main()
 {
-	Vector v1(0, 1, 2);
-	Vector v2(3, 4, 5);
+	Vector v1(1, 1, 1);
+	Vector v2(2, 2, 2);
 	Vector v3;
-	Vector v4;
-	Vector v5;
-	Vector v6;
-	float c = 2;
-	v3 = v1 + v2;
-	v4 = v1 * c;
-	v5 = v1 - v2;
-	std::cin >> v6;
-	std::cout << v3 << '\n';
-	std::cout << "v3 lenght " << static_cast<float>(v3) << '\n';
-	std::cout << v4 << '\n';
-	std::cout << v5 << '\n';
-	std::cout << v6;
+	Array arr;
+	std::cout << v2;
+	v3 = v2 = v1;
+	std::cout << v2;
+	std::cout << arr;
 }
